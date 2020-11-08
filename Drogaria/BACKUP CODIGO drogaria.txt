@@ -1,0 +1,118 @@
+//CONEXÂO
+package br.com.drogaria.factory;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+
+public class ConexaoFactory {
+	private static final String USUARIO = "root";
+	private static final String SENHA = "brulau";
+	private static final String URL = "jdbc:mysql://localhost:3306/vendas";
+	
+	public static Connection conectar() throws SQLException {
+		Connection conexao = DriverManager.getConnection(URL, USUARIO, SENHA);
+		return conexao;
+	}
+	
+	/* TESTE DE CONEXÂO=======================================
+	public static void main(String[] args) {
+		try {
+			Connection conexao = ConexaoFactory.conectar();
+		System.out.println("Conexão realizada com sucesso!!!");
+		
+		} catch (SQLException e) {
+			System.out.println("Conexão Falhou!!!");
+			e.printStackTrace();
+		} =====================================================*/
+	}
+
+
+*******************************************************************************************//
+
+
+//SALVAR
+
+package br.com.drogaria.dao;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+
+import br.com.drogaria.domain.Fabricante;
+import br.com.drogaria.factory.ConexaoFactory;
+
+public class FabricanteDAO {
+	public void salvar(Fabricante f) throws SQLException{ //(Fabricante) é classe domain
+		StringBuilder sql = new StringBuilder(); //Serve para concatenar ao invés de usar +
+		sql.append("INSERT INTO fabricantes "); //fabricante nome da tabela SQL, espaço depois do fabricante para não juntar
+		sql.append("(descricao) "); //Campo da tabela fabricante
+		sql.append("VALUES (?)");
+		
+		Connection conexao = ConexaoFactory.conectar();
+		
+		PreparedStatement comando = conexao.prepareStatement(sql.toString());
+		comando.setString(1, f.getDescricao());
+		
+		comando.executeUpdate();
+	}
+	
+	// TESTE SALVAR===================================================================================
+	/*
+	public static void main(String[] args) {
+		Fabricante f1 = new Fabricante();
+		f1.setDescricao("Embraer");
+		
+		Fabricante f2 = new Fabricante();
+		f2.setDescricao("Randon");
+		
+		FabricanteDAO fdao = new FabricanteDAO();
+		
+		try {
+			fdao.salvar(f1);
+			fdao.salvar(f2);
+			System.out.println("Fabricantes Salvos com sucesso!!!");
+		} catch (SQLException e) {
+			System.out.println("Erro ao salvar!!!");
+			e.printStackTrace();
+		}
+		}
+		
+	} ==================================================================================================*/
+
+// EXCLUIR===========================================================================================
+			
+	public void excluir(Fabricante f) throws SQLException{ //(Fabricante) é classe domain
+		StringBuilder sql = new StringBuilder(); //Serve para concatenar ao invés de usar +
+		sql.append("DELETE FROM fabricantes "); //fabricante nome da tabela SQL, espaço depois do fabricante para não juntar
+		sql.append("WHERE codigo = ? "); //Campo da tabela fabricante
+		
+	    Connection conexao = ConexaoFactory.conectar();
+	
+	    PreparedStatement comando = conexao.prepareStatement(sql.toString());
+		comando.setLong(1, f.getCodigo());
+	
+		comando.executeUpdate();
+}
+	
+	// TESTE EXCLUIR===================================================================================
+		/*
+		public static void main(String[] args) {
+			Fabricante f1 = new Fabricante();
+			f1.setCodigo(1L);
+			
+			FabricanteDAO fdao = new FabricanteDAO();
+			
+			try {
+				fdao.excluir(f1);
+				
+				System.out.println("Fabricante Excluídos com sucesso!!!");
+			} catch (SQLException e) {
+				System.out.println("Erro ao Excluir!!!");
+				e.printStackTrace();
+			}	
+		}=============================================================================================*/
+	}
+
+
+<!-- widgetVar="tabelaFabricantes" -->
